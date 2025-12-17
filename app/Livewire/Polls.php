@@ -6,7 +6,11 @@ use Livewire\Component;
 
 class Polls extends Component
 {
+    public $editingPollId;
+
     #[\Livewire\Attributes\On('pollCreated')]
+    #[\Livewire\Attributes\On('pollUpdated')]
+    #[\Livewire\Attributes\On('pollUpdateCancelled')]
     public function render()
     {
         $polls = \App\Models\Poll::with('options.votes')->latest()->get();
@@ -21,5 +25,22 @@ class Polls extends Component
         $option->votes()->create([
             'poll_id' => $option->poll_id,
         ]);
+    }
+
+    public function delete($pollId)
+    {
+        \App\Models\Poll::findOrFail($pollId)->delete();
+    }
+
+    public function edit($pollId)
+    {
+        $this->editingPollId = $pollId;
+    }
+
+    #[\Livewire\Attributes\On('pollUpdated')]
+    #[\Livewire\Attributes\On('pollUpdateCancelled')]
+    public function cancelEdit()
+    {
+        $this->editingPollId = null;
     }
 }
