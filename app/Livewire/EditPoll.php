@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Option;
+use App\Models\Poll;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class EditPoll extends Component
@@ -16,7 +19,7 @@ class EditPoll extends Component
         'options.*.name' => 'required|min:1|max:255',
     ];
 
-    public function mount(\App\Models\Poll $poll)
+    public function mount(Poll $poll)
     {
         $this->pollId = $poll->id;
         $this->title = $poll->title;
@@ -34,7 +37,7 @@ class EditPoll extends Component
     {
         $option = $this->options[$index];
         if ($option['id']) {
-            \App\Models\Option::find($option['id'])?->delete();
+            Option::find($option['id'])?->delete();
         }
 
         unset($this->options[$index]);
@@ -45,16 +48,18 @@ class EditPoll extends Component
     {
         $this->validate();
 
-        $poll = \App\Models\Poll::findOrFail($this->pollId);
-        $poll->update(['title' => $this->title]);
+        DB::transaction(function () {
+            $poll = Poll::findOrFail($this->pollId);
+            $poll->update(['title' => $this->title]);
 
-        foreach ($this->options as $optionData) {
-            if ($optionData['id']) {
-                $poll->options()->where('id', $optionData['id'])->update(['name' => $optionData['name']]);
-            } else {
-                $poll->options()->create(['name' => $optionData['name']]);
+            foreach ($this->options as $optionData) {
+                if ($optionData['id']) {
+                    $poll->options()->where('id', $optionData['id'])->update(['name' => $optionData['name']]);
+                } else {
+                    $poll->options()->create(['name' => $optionData['name']]);
+                }
             }
-        }
+        });
 
         $this->dispatch('pollUpdated');
     }

@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Poll;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class CreatePoll extends Component
@@ -35,13 +37,15 @@ class CreatePoll extends Component
     {
         $this->validate();
 
-        $poll = \App\Models\Poll::create([
-            'title' => $this->title
-        ]);
+        DB::transaction(function () {
+            $poll = Poll::create([
+                'title' => $this->title
+            ]);
 
-        foreach ($this->options as $optionName) {
-            $poll->options()->create(['name' => $optionName]);
-        }
+            foreach ($this->options as $optionName) {
+                $poll->options()->create(['name' => $optionName]);
+            }
+        });
 
         $this->reset(['title', 'options']);
 
