@@ -10,6 +10,7 @@
 
 <body>
     <livewire:create-poll />
+    <livewire:polls />
 
     @livewireScripts
 </body>
