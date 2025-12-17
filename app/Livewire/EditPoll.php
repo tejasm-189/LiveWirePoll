@@ -19,6 +19,11 @@ class EditPoll extends Component
         'options.*.name' => 'required|min:1|max:255',
     ];
 
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+    }
+
     public function mount(Poll $poll)
     {
         $this->pollId = $poll->id;
