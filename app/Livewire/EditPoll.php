@@ -67,6 +67,7 @@ class EditPoll extends Component
         });
 
         $this->dispatch('pollUpdated');
+        $this->dispatch('notify', message: 'Poll Updated Successfully!');
     }
 
     public function render()

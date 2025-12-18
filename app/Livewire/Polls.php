@@ -13,7 +13,9 @@ class Polls extends Component
     #[\Livewire\Attributes\On('pollUpdateCancelled')]
     public function render()
     {
-        $polls = \App\Models\Poll::with('options.votes')->latest()->get();
+        $polls = \App\Models\Poll::with(['options' => function ($query) {
+            $query->withCount('votes');
+        }])->latest()->get();
 
         return view('livewire.polls', ['polls' => $polls]);
     }
@@ -30,6 +32,7 @@ class Polls extends Component
     public function delete($pollId)
     {
         \App\Models\Poll::findOrFail($pollId)->delete();
+        $this->dispatch('notify', message: 'Poll Deleted Successfully!', type: 'success');
     }
 
     public function edit($pollId)

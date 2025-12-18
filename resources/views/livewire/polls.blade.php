@@ -32,8 +32,8 @@
                 <div class="relative group/option cursor-pointer" wire:click="vote({{ $option->id }})">
                     <!-- Progress Bar Background -->
                     @php
-                    $totalVotes = $poll->options->sum(fn($o) => $o->votes->count());
-                    $percentage = $totalVotes > 0 ? ($option->votes->count() / $totalVotes) * 100 : 0;
+                    $totalVotes = $poll->options->sum('votes_count');
+                    $percentage = $totalVotes > 0 ? ($option->votes_count / $totalVotes) * 100 : 0;
                     @endphp
                     <div class="absolute inset-0 bg-indigo-50 rounded-lg transform scale-x-0 origin-left transition-transform duration-500 ease-out"
                         style="width: 100%; --poll-progress: {{ $percentage / 100 }}; transform: scaleX(var(--poll-progress))"></div>
@@ -44,7 +44,7 @@
                             <span class="font-medium text-gray-700 group-hover/option:text-indigo-700 transition-colors">{{ $option->name }}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-indigo-900">{{ $option->votes->count() }}</span>
+                            <span class="text-sm font-bold text-indigo-900">{{ $option->votes_count }}</span>
                             <span class="text-xs text-indigo-400 font-medium tracking-wide">VOTES</span>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
 
             <div class="mt-6 flex justify-end">
                 <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    Total Votes: {{ $poll->options->sum(fn($o) => $o->votes->count()) }}
+                    Total Votes: {{ $poll->options->sum('votes_count') }}
                 </span>
             </div>
         </div>

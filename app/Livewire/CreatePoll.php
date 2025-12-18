@@ -50,6 +50,7 @@ class CreatePoll extends Component
         $this->reset(['title', 'options']);
 
         $this->dispatch('pollCreated');
+        $this->dispatch('notify', message: 'Poll Created Successfully!');
     }
 
     public function render()
